@@ -1,19 +1,17 @@
-#ifndef TILE_HPP
-#define TILE_HPP
-#include <vector>
+#ifndef TILE_H
+#define TILE_H
 
-using namespace std;
+#include "widget.hpp"
 
-class tile
-{
+class tile: public  widget{
+
 public:
-    tile(int x, int y, int xM, int yM, bool CIR, bool TRI);
+    tile(int x, int y, int xM, int yM, bool CIR, bool TRI, bool rajta);
 
+    virtual void torol();
+    virtual void kirajzol();
 
-protected:
-int x,y,xM,yM;
-bool CIR,TRI;
-
+    bool rajta;
 };
 
-#endif // TILE_HPP
+#endif // TILE_H

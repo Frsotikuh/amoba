@@ -1,5 +1,5 @@
 #include "graphics.hpp"
-#include "palya.hpp"
+#include "tile.hpp"
 using namespace genv;
 using namespace std;
 
@@ -8,9 +8,9 @@ const int width = 1200;
 const int height = 1000;
 
 
-palya* ujmezo(int x, int y, int xM, int yM){
+tile* ujmezo(int x, int y, int xM, int yM){
 
-    return new palya(x,y, xM, yM, false, false,false);
+    return new tile(x,y, xM, yM, false, false,false);
 }
 
 void torol()
@@ -26,7 +26,7 @@ int main()
 
     event ev;
 
-    vector<palya*> p;
+    vector<tile*> p;
 
 
 
