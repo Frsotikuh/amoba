@@ -7,12 +7,11 @@ using namespace std;
 class widget
 {
 public:
-    widget(int x, int y, int xM, int yM, bool CIR, bool TRI);
+    widget(int x, int y);
 
 
 protected:
-int x,y,xM,yM;
-bool CIR,TRI;
+int x,y;
 
 };
 
