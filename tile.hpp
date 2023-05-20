@@ -3,6 +3,7 @@
 
 #include "widget.hpp"
 #include "graphics.hpp"
+#include "gamemaster.hpp"
 
 using namespace genv;
 
@@ -17,6 +18,20 @@ public:
     virtual void xdraw();
     virtual void circdraw(int r);
     virtual tile* ujmezo(int x, int y, int xM, int yM);
+    virtual void previewround(bool pl1turn, bool pl2turn, int r);
+
+    virtual bool getrajta();
+    virtual bool getCIR();
+    virtual bool getXLET();
+    virtual int getxM();
+    virtual int getyM();
+    virtual int getposx();
+    virtual int getposy();
+
+    virtual void setCIR();
+    virtual void setXLET();
+    virtual void clearrajta();
+    virtual bool checkwinkor(vector<tile*> p);
 
 
     int xM,yM;
