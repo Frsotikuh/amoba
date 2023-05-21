@@ -19,6 +19,7 @@ public:
     virtual void circdraw(int r);
     virtual tile* ujmezo(int x, int y, int xM, int yM);
     virtual void previewround(bool pl1turn, bool pl2turn, int r);
+    virtual void winnerdrawvertical(bool pl1win, bool pl2win);
 
     virtual bool getrajta();
     virtual bool getCIR();
@@ -28,10 +29,11 @@ public:
     virtual int getposx();
     virtual int getposy();
 
+
     virtual void setCIR();
     virtual void setXLET();
     virtual void clearrajta();
-    virtual bool checkwinkor(vector<tile*> p);
+
 
 
     int xM,yM;

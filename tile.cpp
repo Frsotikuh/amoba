@@ -31,7 +31,6 @@ bool tile::getXLET()
 void tile::setCIR()
 {
     CIR = true;
-
 }
 
 void tile::setXLET()
@@ -64,6 +63,8 @@ int tile::getyM()
 {
     return yM;
 }
+
+
 
 void tile::torol()
 {
@@ -215,27 +216,21 @@ tile* tile::ujmezo(int x, int y, int xM, int yM){
     return new tile(x,y, xM, yM, false, false,false);
 }
 
-bool tile::checkwinkor(vector<tile*> p)
+void tile::winnerdrawvertical(bool pl1win, bool pl2win)
 {
-    bool kor = false;
-
-
-    for(size_t i = 1; i < p.size(); i++)
+    gout << color(100,100,0) << move_to(x+2,y+2) << box_to(x+48,y+48);
+    if(pl1win)
     {
-
-        if(p[i]->getCIR() == true and p[i+1]->getCIR() == true and p[i+2]->getCIR() == true and p[i+3]->getCIR() == true and p[i+4]->getCIR() == true )
-        {
-            kor = true;
-        }
-
-        else{
-            kor = false;
-        }
+       gout << color(255,255,255) << move_to(400,80) << text("A JATEKOT MEGYNERTE: ") << color(255,0,0) << text("PLAYER1");
+    }
+    if(pl2win)
+    {
+       gout << color(255,255,255) << move_to(400,80) << text("A JATEKOT MEGYNERTE: ") << color(0,0,255) << text("PLAYER2");
     }
 
 
-    return kor;
-
 }
+
+
 
 

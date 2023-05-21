@@ -11,15 +11,23 @@
 using namespace genv;
 using namespace std;
 
-gamemaster::gamemaster(bool menu, bool singlemode, bool multimode, bool gamestart, bool gameend, bool pl1turn, bool pl2turn, bool pl1win, bool pl2win):
-    menu(menu), singlemode(singlemode),multimode(multimode),gamestart(gamestart), gameend(gameend), pl1turn(pl1turn), pl2turn(pl2turn), pl1win(pl1win), pl2win(pl2win)
+gamemaster::gamemaster(bool menu, bool singlemode, bool multimode, bool gamestart, bool gameend, bool pl1turn, bool pl2turn, bool pl1win, bool pl2win, bool horwin, bool verwin):
+    menu(menu), singlemode(singlemode),multimode(multimode),gamestart(gamestart), gameend(gameend), pl1turn(pl1turn), pl2turn(pl2turn), pl1win(pl1win), pl2win(pl2win), horwin(horwin), verwin(verwin)
 {}
 
 
-
-
-
-
+bool gamemaster::quit()
+{
+    bool kilep = false;
+    if(singlemode == false and multimode == false and menu == false)
+    {
+        kilep = true;
+    }
+    else{
+        kilep = false;
+    }
+    return kilep;
+}
 
 bool gamemaster::getpl1turn()
 {
@@ -56,7 +64,7 @@ int gamemaster::randomstart(int random)
 }
 
 
-void gamemaster::handlegame(gamemaster* g)
+void gamemaster::handlegame()
 {
     int const width = 1200;
     int const height = 1000;
@@ -70,14 +78,14 @@ void gamemaster::handlegame(gamemaster* g)
     int distx = 0;
     int disty = 0;
     int tracker = -1;
-    srand(time(0));
-    int random = rand() % 100;
-    bool nocheat = false;
-    bool kor = false;
-    bool xes = false;
+    int melyiki = 0;
+    int melyikj = 0;
 
-    int checkX = 0;
-    int checkY = 0;
+
+    bool nocheat = false;
+
+
+
 
 
 
@@ -97,7 +105,7 @@ void gamemaster::handlegame(gamemaster* g)
 
 
 
-    g->gameprep();
+   gameprep();
 
 
 
@@ -132,6 +140,12 @@ void gamemaster::handlegame(gamemaster* g)
                 multimode = true;
 
             }
+            if(m->getquitselect(ev))
+            {
+                menu = false;
+                singlemode = false;
+                multimode = false;
+            }
 
         }
 
@@ -142,51 +156,54 @@ void gamemaster::handlegame(gamemaster* g)
             {
 
 
+
                 p[i] -> kirajzol();
                 p[i] -> previewclick(ev);
                 p[i] -> getrajta();
                 p[i] -> getCIR();
                 p[i] -> getXLET();
-
-
-
-
-
-                if(pl1turn == true)
-                {
-
-                   if(p[i] -> getrajta() == true and p[i]-> getCIR() == false and ev.button == 1)
-                   {
-                       p[i]->setXLET();
-
-                   }
-
-
-                }
-
-                if(pl2turn == true)
-                {
-
-                    if(p[i] -> getrajta() == true and p[i]-> getXLET() == false and ev.button == 1)
-                    {
-                        p[i]->setCIR();
-
-
-                    }
-                }
-
                 p[i] -> xdraw();
                 p[i] -> circdraw(15);
 
+                if(pl1turn == true)  //SIGSEGV CRASH ???
+                {
 
-                if(kor)
+                   if(p[i] -> getrajta() == true and p[i]-> getCIR() == false and p[i] -> getXLET() == false and ev.button == 1)
+                   {
+
+                       p[i]->setXLET();
+                   }
+                }
+
+
+                if(pl2turn == true) //SIGSEGV CRASH ???
+                {
+                    if(p[i] -> getrajta() == true and p[i]-> getXLET() == false and p[i]->getCIR() == false and ev.button == 1)
+                    {
+                       p[i]->setCIR();
+                    }
+                }
+
+
+                if(p[i]->getrajta() == true) //NO BORDER CLICKING
+                {
+                    nocheat = true;
+                    p[i] -> clearrajta();
+                }
+
+                if(pl2win or pl1win)
                 {
                     gamestart = false;
                 }
 
+
+
+
             }
 
             p[1] -> previewround(pl1turn,pl2turn,70);
+
+
 
 
         }
@@ -207,16 +224,6 @@ void gamemaster::handlegame(gamemaster* g)
             }
 
 
-            //NO BORDER CLICKING CHEAT
-            for(size_t i = 0; i < p.size();i++)
-            {
-                if(p[i]->getrajta() == true)
-                {
-                    nocheat = true;
-                    p[i] -> clearrajta();
-                }
-
-            }
 
             if(nocheat == true)
             {
@@ -225,27 +232,155 @@ void gamemaster::handlegame(gamemaster* g)
                 cout << tracker << endl;
             }
 
-            for(int j = 0; j < 15; j++) //HORIZONTAL CHECK
+            for(int j = 0; j < 15; j++) //WIN CHECK
             {
                 for(int i = 0; i < 15; i++)
                 {
+                    //HORIZONTAL CHECK
 
                     if(p[i+(j*15)]->getCIR() and p[i+1+(j*15)]->getCIR() and p[i+2 + (j*15)]->getCIR() and p[i+3 + (j*15)]->getCIR() and p[i+4 + (j*15)]->getCIR())
                     {
-                        kor = true;
+
+                        pl2win = true;
+                        horwin = true;
+                        melyiki = i;
+                        melyikj = j;
+
                     }
 
                     if(p[i+(j*15)]->getXLET() and p[i+1+(j*15)]->getXLET() and p[i+2 + (j*15)]->getXLET() and p[i+3 + (j*15)]->getXLET() and p[i+4 + (j*15)]->getXLET())
                     {
-                        xes = true;
+
+                        pl1win = true;
+                        horwin = true;
+                        melyiki = i;
+                        melyikj = j;
                     }
+
+
+                    /*
+                    //VERTICAL CHECK
+                    if((p[i]->getCIR() and p[i+16]->getCIR() and p[i+32]->getCIR() and p[i+48]->getCIR() and p[i+64]->getCIR())
+                            or (p[i+16]->getCIR() and p[i+32]->getCIR() and p[i+48]->getCIR() and p[i+64]->getCIR() and p[i+80]->getCIR())
+                            or (p[i+128]->getCIR() and p[i+144]->getCIR() and p[i+160]->getCIR() and p[i+176]->getCIR() and p[i+192]->getCIR())
+                            or (p[i+160]->getCIR() and p[i+176]->getCIR() and p[i+192]->getCIR() and p[i+208]->getCIR() and p[i+224]->getCIR()))
+                    {
+                        pl2win = true;
+                    }
+
+                    if((p[i]->getXLET() and p[i+16]->getXLET() and p[i+32]->getXLET() and p[i+48]->getXLET() and p[i+64]->getXLET())
+                            or (p[i+80]->getXLET() and p[i+96]->getXLET() and p[i+112]->getXLET() and p[i+128]->getXLET() and p[i+144]->getXLET())
+                            or (p[i+160]->getXLET() and p[i+176]->getXLET() and p[i+192]->getXLET() and p[i+208]->getXLET() and p[i+224]->getXLET()) )
+                    {
+                        pl1win = true;
+                    }
+                    */
+
+
 
                 }
 
 
             }
 
+            for(int c = 0; c < 15; c++)
+            {
+                for(int k = 0; k < 15; k++)
+                {
+                    if(p[k+(c*15)]->getCIR() and p[k+((c+1)*15)]->getCIR() and p[k+((c+2)*15)]->getCIR() and p[k+((c+3)*15)]->getCIR() and p[k+((c+4)*15)]->getCIR())
+                    {
+                        pl2win = true;
+                        verwin = true;
+                        melyiki = k;
+                        melyikj = c;
+                    }
+
+                    if(p[k+(c*15)]->getXLET() and p[k+((c+1)*15)]->getXLET() and p[k+((c+2)*15)]->getXLET() and p[k+((c+3)*15)]->getXLET() and p[k+((c+4)*15)]->getXLET())
+                    {
+                        pl1win = true;
+                        verwin = true;
+                        melyiki = k;
+                        melyikj = c;
+                    }
+                }
+            }
+
+
+
+
+
+
         }
+
+        //END OF GAME
+
+        if(gamestart == false and (pl1win or pl2win) and horwin)
+        {
+            p[melyiki + melyikj*15]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+1 + melyikj*15]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+2 + melyikj*15]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+3 + melyikj*15]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+4 + melyikj*15]->winnerdrawvertical(pl1win,pl2win);
+
+
+
+            if(pl1win)
+            {
+                p[melyiki + melyikj*15]->xdraw();
+                p[melyiki+1 + melyikj*15]->xdraw();
+                p[melyiki+2 + melyikj*15]->xdraw();
+                p[melyiki+3 + melyikj*15]->xdraw();
+                p[melyiki+4 + melyikj*15]->xdraw();
+            }
+
+            if(pl2win)
+            {
+                p[melyiki + melyikj*15]->circdraw(15);
+                p[melyiki+1 + melyikj*15]->circdraw(15);
+                p[melyiki+2 + melyikj*15]->circdraw(15);
+                p[melyiki+3 + melyikj*15]->circdraw(15);
+                p[melyiki+4 + melyikj*15]->circdraw(15);
+            }
+
+            gout << refresh;
+
+
+        }
+
+        if(gamestart == false and (pl1win or pl2win) and verwin)
+        {
+            p[melyiki+(melyikj*15)]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+((melyikj+1)*15)]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+((melyikj+2)*15)]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+((melyikj+3)*15)]->winnerdrawvertical(pl1win,pl2win);
+            p[melyiki+((melyikj+4)*15)]->winnerdrawvertical(pl1win,pl2win);
+
+
+
+            if(pl1win)
+            {
+                p[melyiki+(melyikj*15)]->xdraw();
+                p[melyiki+((melyikj+1)*15)]->xdraw();
+                p[melyiki+((melyikj+2)*15)]->xdraw();
+                p[melyiki+((melyikj+3)*15)]->xdraw();
+                p[melyiki+((melyikj+4)*15)]->xdraw();
+            }
+
+            if(pl2win)
+            {
+                p[melyiki + melyikj*15]->circdraw(15);
+                p[melyiki+1 + melyikj*15]->circdraw(15);
+                p[melyiki+2 + melyikj*15]->circdraw(15);
+                p[melyiki+3 + melyikj*15]->circdraw(15);
+                p[melyiki+4 + melyikj*15]->circdraw(15);
+            }
+
+            gout << refresh;
+
+
+        }
+
+
 
 
     }
